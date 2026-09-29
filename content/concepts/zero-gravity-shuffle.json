@@ -1,0 +1,66 @@
+{
+  "id": "con_zero_gravity_shuffle",
+  "slug": "zero-gravity-shuffle",
+  "name": "Zero Gravity Shuffle",
+  "status": "REFERENCE_PENDING",
+  "concept": "Footwork that looks like it's happening in low gravity: glides with no visible push-off, suspended off-axis balances, and one big comedic 'gravity returns' drop. Smoothness is the hook; the drop is the punchline.",
+  "hook": "Feet glide, body floats \u2014 then gravity remembers you.",
+  "firstSecond": "Both feet slide half a metre sideways with no visible step while the shoulders rise, as if weight has just switched off.",
+  "sequence": [
+    {
+      "at": 0,
+      "name": "Lift-off",
+      "description": "Sideways heel-toe slide, shoulders rise, arms drift up with palms down."
+    },
+    {
+      "at": 1.5,
+      "name": "Drift",
+      "description": "Continuous heel-toe glides left and right; arms float at shoulder height."
+    },
+    {
+      "at": 3,
+      "name": "Suspend",
+      "description": "One-leg off-axis float pose, held 0.8s."
+    },
+    {
+      "at": 4,
+      "name": "Gravity returns",
+      "description": "Exaggerated drop: knees bend deep, arms slam down, springy recovery bounce."
+    },
+    {
+      "at": 5.5,
+      "name": "Back-glide",
+      "description": "Backward heel-toe glide, torso upright and calm."
+    },
+    {
+      "at": 7,
+      "name": "Re-float",
+      "description": "Shoulders rise again, settling into the Lift-off stance."
+    }
+  ],
+  "signature": "The Suspend: standing on one leg, other knee raised, whole body leaning ~15\u00b0 off-axis and held as if floating in orbit.",
+  "loopPoint": "Re-float ends in the exact Lift-off stance, feet together, so the slide restarts seamlessly.",
+  "durationSeconds": 8,
+  "energy": 3,
+  "difficulty": 4,
+  "cameraGuidance": "Locked-off camera at hip height, slightly wider framing than usual so lateral glides stay in frame. Smooth floor, contrasting shoes.",
+  "motionTransferConsiderations": [
+    "Feet are the identity of this move: shoes must contrast with the floor and never leave frame.",
+    "Keep glides under ~0.6s each; very fast foot work tends to smear in motion transfer.",
+    "The gravity drop should stay upright \u2014 no floor contact with hands or knees."
+  ],
+  "generationGuidance": "Motion from an owned reference performance only. Emphasise feet visibility in the prompt. Character orientation from video. Reference audio off.",
+  "referenceCapture": {
+    "performerBrief": "One performer on a smooth floor (socks or slick-soled shoes) performs lateral and backward heel-toe glides, a held one-leg float and an exaggerated drop-and-bounce. Keep glides controlled, not fast.",
+    "wardrobe": "Shoes that contrast strongly with the floor; trousers that don't cover the ankles; fitted top.",
+    "framing": "Portrait 9:16, slightly wide so lateral travel stays in frame, feet never cropped, plain background.",
+    "tempoBpm": 100
+  },
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "createdOn": "2026-09-29",
+    "method": "IN_HOUSE_ORIGINAL",
+    "notes": "Launch original."
+  },
+  "templateId": "tpl_zero_gravity_shuffle"
+}

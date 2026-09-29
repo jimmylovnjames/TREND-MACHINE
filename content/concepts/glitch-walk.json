@@ -1,0 +1,66 @@
+{
+  "id": "con_glitch_walk",
+  "slug": "glitch-walk",
+  "name": "Glitch Walk",
+  "status": "REFERENCE_PENDING",
+  "concept": "A walk that behaves like a corrupted video stream: normal forward motion punctuated by dropped frames, dead-stop freezes, a short rewind and a visible 'recalibration' of the body. The joke and the hook are the same thing \u2014 reality buffering.",
+  "hook": "You step forward \u2014 and the universe drops frames.",
+  "firstSecond": "Frame zero is a hard freeze mid-stride. Within 0.8s the body snaps forward through three stutter-steps, each one landing on a dead stop.",
+  "sequence": [
+    {
+      "at": 0,
+      "name": "Hard freeze",
+      "description": "Start frozen mid-stride, arms locked. Snap forward through three stutter-steps, each ending in a dead stop."
+    },
+    {
+      "at": 1,
+      "name": "Signal drop",
+      "description": "Walk forward normally; every second step the torso jerks back a few centimetres as if frames were dropped, then resumes."
+    },
+    {
+      "at": 2.5,
+      "name": "Buffer",
+      "description": "Full freeze: lifted foot, tilted head, mismatched arm angles. Hold 0.6s."
+    },
+    {
+      "at": 3.2,
+      "name": "Rewind",
+      "description": "Three choppy steps backwards at double speed."
+    },
+    {
+      "at": 4.5,
+      "name": "Correction",
+      "description": "The body recalibrates: head, shoulders, then hips each snap back to centre in sequence."
+    },
+    {
+      "at": 5.5,
+      "name": "Resume",
+      "description": "Smooth forward walk that decelerates into the opening mid-stride freeze."
+    }
+  ],
+  "signature": "The Buffer: one foot lifted, head tilted about 30\u00b0, arms locked at mismatched angles, held perfectly still for 0.6s before snapping back to normal walking.",
+  "loopPoint": "The final step lands in the same mid-stride freeze as frame zero, so the clip loops without a visible seam.",
+  "durationSeconds": 7,
+  "energy": 4,
+  "difficulty": 3,
+  "cameraGuidance": "Locked-off camera at chest height, performer walks toward the lens and stays fully in frame (head to feet) for the whole take.",
+  "motionTransferConsiderations": [
+    "Freezes must be truly static in the reference; micro-drift reads as model jitter, not intent.",
+    "Keep total forward travel under ~1.5m so the performer never leaves frame or changes scale dramatically.",
+    "Avoid arm-over-face occlusion during the Buffer pose."
+  ],
+  "generationGuidance": "Motion must come from an owned reference performance. Prompt only describes scene and identity preservation. Prefer character orientation from the reference video. Keep the reference audio off.",
+  "referenceCapture": {
+    "performerBrief": "One performer walks toward a locked-off camera over ~1.5m, executing the six phases. Freezes must be dead still (practice holding breath on freezes). Arms stay away from the face.",
+    "wardrobe": "Fitted clothing with visible arm/leg lines; no long coats, no hats covering the face.",
+    "framing": "Portrait 9:16 (1080x1920 preferred), head-to-feet always in frame with ~10% headroom, plain background, even lighting.",
+    "tempoBpm": 110
+  },
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "createdOn": "2026-09-29",
+    "method": "IN_HOUSE_ORIGINAL",
+    "notes": "Launch original."
+  },
+  "templateId": "tpl_glitch_walk"
+}

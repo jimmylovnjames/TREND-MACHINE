@@ -1,0 +1,61 @@
+{
+  "id": "con_rubber_legs",
+  "slug": "rubber-legs",
+  "name": "Rubber Legs",
+  "status": "REFERENCE_PENDING",
+  "concept": "A deliberate contrast between chaos and composure: legs behave like rubber \u2014 buckling, rebounding, wobbling \u2014 while the upper body stays deadpan and businesslike. Immediately funny and robust to imperfect motion transfer.",
+  "hook": "Knees give out instantly \u2014 and your upper body refuses to notice.",
+  "firstSecond": "Both knees buckle inward at once and the body drops ~20cm \u2014 while hands stay casually in pockets and the face stays deadpan \u2014 then springs back up.",
+  "sequence": [
+    {
+      "at": 0,
+      "name": "Buckle",
+      "description": "Instant inward knee buckle and drop; upper body composed. Spring back."
+    },
+    {
+      "at": 1,
+      "name": "Rebound",
+      "description": "Legs snap outward and the body bounces sideways to one side."
+    },
+    {
+      "at": 2,
+      "name": "Noodle walk",
+      "description": "Two steps with extreme knee wobble, feet flicking outward."
+    },
+    {
+      "at": 3.5,
+      "name": "Business as usual",
+      "description": "Upper body casually adjusts collar or sleeve while the legs keep wobbling."
+    },
+    {
+      "at": 4.5,
+      "name": "Double buckle",
+      "description": "Two quick buckles, then straighten sharply to attention."
+    }
+  ],
+  "signature": "The Composed Collapse: a deep inward knee buckle with a perfectly still, unimpressed upper body.",
+  "loopPoint": "Ends standing straight with hands in pockets \u2014 the same stance the opening buckle starts from.",
+  "durationSeconds": 6,
+  "energy": 4,
+  "difficulty": 2,
+  "cameraGuidance": "Locked-off camera at hip height, full body in frame with some headroom so the vertical drop reads clearly.",
+  "motionTransferConsiderations": [
+    "Designed to tolerate imperfect transfer: exaggerated leg motion hides minor limb artifacts.",
+    "Keep hands visible or clearly in pockets for the whole take \u2014 half-hidden hands confuse pose estimation.",
+    "Knee buckles should stay above ~90\u00b0 to avoid self-occlusion of the legs."
+  ],
+  "generationGuidance": "Motion from an owned reference performance only. Prompt reinforces the calm upper body. Character orientation from video. Reference audio off.",
+  "referenceCapture": {
+    "performerBrief": "One performer, hands in pockets or casually adjusting clothes, performs sudden inward knee buckles, sideways rebounds and a noodle walk. The face stays unimpressed throughout.",
+    "wardrobe": "Trousers that show knee movement clearly (no very baggy pants), jacket or collared shirt for the 'composed' contrast.",
+    "framing": "Portrait 9:16, head-to-feet in frame with headroom for the vertical drop, plain background, even lighting.",
+    "tempoBpm": 120
+  },
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "createdOn": "2026-09-29",
+    "method": "IN_HOUSE_ORIGINAL",
+    "notes": "Launch original."
+  },
+  "templateId": "tpl_rubber_legs"
+}

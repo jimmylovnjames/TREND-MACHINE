@@ -1,0 +1,101 @@
+{
+  "id": "tpl_glitch_walk",
+  "slug": "glitch-walk",
+  "name": "Glitch Walk",
+  "status": "PREVIEW",
+  "category": "ORIGINAL",
+  "origin": { "type": "ORIGINAL", "conceptId": "con_glitch_walk", "trendCandidateId": null },
+  "tagline": "Walk like the signal's breaking.",
+  "hook": "You step forward — and the universe drops frames.",
+  "description": "A confident forward walk interrupted by hard stutters, frozen mid-stride poses and broken-signal body corrections. It reads instantly as a glitch, even with the sound off.",
+  "durationSeconds": 7,
+  "aspectRatio": "9:16",
+  "energy": 4,
+  "difficulty": 3,
+  "tags": ["glitch", "walk", "freeze", "stutter", "loop"],
+  "featured": true,
+  "sortOrder": 10,
+  "artwork": { "motif": "glitch", "palette": ["#C6FF00", "#FF2E88", "#00E5FF"] },
+  "media": { "thumbnailKey": null, "previewVideoKey": null },
+  "movement": {
+    "firstSecond": "Frame zero is a hard freeze mid-stride. Within 0.8s the body snaps forward through three stutter-steps, each one landing on a dead stop.",
+    "signature": "The Buffer: one foot lifted, head tilted about 30°, arms locked at mismatched angles, held perfectly still for 0.6s before snapping back to normal walking.",
+    "sequence": [
+      {
+        "at": 0,
+        "name": "Hard freeze",
+        "description": "Start frozen mid-stride, arms locked. Snap forward through three stutter-steps, each ending in a dead stop."
+      },
+      {
+        "at": 1,
+        "name": "Signal drop",
+        "description": "Walk forward normally; every second step the torso jerks back a few centimetres as if frames were dropped, then resumes."
+      },
+      {
+        "at": 2.5,
+        "name": "Buffer",
+        "description": "Full freeze: lifted foot, tilted head, mismatched arm angles. Hold 0.6s."
+      },
+      { "at": 3.2, "name": "Rewind", "description": "Three choppy steps backwards at double speed." },
+      {
+        "at": 4.5,
+        "name": "Correction",
+        "description": "The body recalibrates: head, shoulders, then hips each snap back to centre in sequence."
+      },
+      {
+        "at": 5.5,
+        "name": "Resume",
+        "description": "Smooth forward walk that decelerates into the opening mid-stride freeze."
+      }
+    ],
+    "loopPoint": "The final step lands in the same mid-stride freeze as frame zero, so the clip loops without a visible seam.",
+    "bodyFocus": "FULL_BODY",
+    "designedCharacteristics": {
+      "first_second_hook": 5,
+      "silhouette": 4,
+      "amplitude": 3,
+      "absurdity": 3,
+      "difficulty": 3,
+      "repetition": 3,
+      "loop_quality": 5,
+      "camera_interaction": 2,
+      "transformation_potential": 4,
+      "recognizability": 5,
+      "group_compatibility": 4
+    },
+    "cameraGuidance": "Locked-off camera at chest height, performer walks toward the lens and stays fully in frame (head to feet) for the whole take.",
+    "transferConsiderations": [
+      "Freezes must be truly static in the reference; micro-drift reads as model jitter, not intent.",
+      "Keep total forward travel under ~1.5m so the performer never leaves frame or changes scale dramatically.",
+      "Avoid arm-over-face occlusion during the Buffer pose."
+    ]
+  },
+  "recipe": {
+    "capability": "HUMAN_MOTION_TRANSFER",
+    "prompt": "The person from the photo performs a stop-start glitch walk toward the camera in a clean, evenly lit space. Preserve their face, body shape, hair and clothing exactly. Stable, locked-off camera. Crisp freezes, no motion blur on held poses.",
+    "characterOrientation": "video",
+    "audio": { "mode": "NONE", "trackId": null },
+    "keepReferenceAudio": false,
+    "outputAspectRatio": "9:16",
+    "timeoutSeconds": 900
+  },
+  "providerPreferences": [
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/std", "priority": 0 },
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/pro", "priority": 1 },
+    { "providerId": "viggle", "model": "viggle/v1/render", "priority": 5 }
+  ],
+  "fallbackProviderId": "viggle",
+  "providerConfig": {},
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "method": "IN_HOUSE_ORIGINAL",
+    "createdOn": "2026-09-29",
+    "notes": "Original concept created for TREND MACHINE launch. Not derived from any specific existing viral trend."
+  },
+  "rights": {
+    "choreographyOwner": "TREND MACHINE",
+    "choreographyLicense": "Proprietary original choreography concept",
+    "musicIncluded": false,
+    "notes": "No music is bundled. Audio is handled separately from movement."
+  }
+}

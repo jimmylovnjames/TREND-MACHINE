@@ -1,0 +1,100 @@
+{
+  "id": "tpl_rubber_legs",
+  "slug": "rubber-legs",
+  "name": "Rubber Legs",
+  "status": "PREVIEW",
+  "category": "ORIGINAL",
+  "origin": { "type": "ORIGINAL", "conceptId": "con_rubber_legs", "trendCandidateId": null },
+  "tagline": "Legs: noodles. Face: business.",
+  "hook": "Knees give out instantly — and your upper body refuses to notice.",
+  "description": "Elastic knee buckles, sideways rebounds and noodle-walk wobbles below the waist, while the upper body stays calm and composed. Funny in the first frame, and forgiving when motion transfer isn't perfect.",
+  "durationSeconds": 6,
+  "aspectRatio": "9:16",
+  "energy": 4,
+  "difficulty": 2,
+  "tags": ["funny", "legs", "wobble", "bounce", "loop"],
+  "featured": false,
+  "sortOrder": 30,
+  "artwork": { "motif": "rubber", "palette": ["#FFB300", "#FF3D00", "#FFF3D6"] },
+  "media": { "thumbnailKey": null, "previewVideoKey": null },
+  "movement": {
+    "firstSecond": "Both knees buckle inward at once and the body drops ~20cm — while hands stay casually in pockets and the face stays deadpan — then springs back up.",
+    "signature": "The Composed Collapse: a deep inward knee buckle with a perfectly still, unimpressed upper body.",
+    "sequence": [
+      {
+        "at": 0,
+        "name": "Buckle",
+        "description": "Instant inward knee buckle and drop; upper body composed. Spring back."
+      },
+      {
+        "at": 1,
+        "name": "Rebound",
+        "description": "Legs snap outward and the body bounces sideways to one side."
+      },
+      {
+        "at": 2,
+        "name": "Noodle walk",
+        "description": "Two steps with extreme knee wobble, feet flicking outward."
+      },
+      {
+        "at": 3.5,
+        "name": "Business as usual",
+        "description": "Upper body casually adjusts collar or sleeve while the legs keep wobbling."
+      },
+      {
+        "at": 4.5,
+        "name": "Double buckle",
+        "description": "Two quick buckles, then straighten sharply to attention."
+      }
+    ],
+    "loopPoint": "Ends standing straight with hands in pockets — the same stance the opening buckle starts from.",
+    "bodyFocus": "LOWER_BODY",
+    "designedCharacteristics": {
+      "first_second_hook": 5,
+      "silhouette": 5,
+      "amplitude": 4,
+      "absurdity": 5,
+      "difficulty": 2,
+      "repetition": 3,
+      "loop_quality": 4,
+      "camera_interaction": 2,
+      "transformation_potential": 3,
+      "recognizability": 5,
+      "group_compatibility": 5
+    },
+    "cameraGuidance": "Locked-off camera at hip height, full body in frame with some headroom so the vertical drop reads clearly.",
+    "transferConsiderations": [
+      "Designed to tolerate imperfect transfer: exaggerated leg motion hides minor limb artifacts.",
+      "Keep hands visible or clearly in pockets for the whole take — half-hidden hands confuse pose estimation.",
+      "Knee buckles should stay above ~90° to avoid self-occlusion of the legs."
+    ]
+  },
+  "recipe": {
+    "capability": "HUMAN_MOTION_TRANSFER",
+    "prompt": "The person from the photo does a comedic wobbly-legs dance with a calm, composed upper body, in a clean, evenly lit space. Preserve their face, body shape, hair and clothing exactly. Stable camera.",
+    "characterOrientation": "video",
+    "audio": { "mode": "NONE", "trackId": null },
+    "keepReferenceAudio": false,
+    "outputAspectRatio": "9:16",
+    "timeoutSeconds": 900
+  },
+  "providerPreferences": [
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/std", "priority": 0 },
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/pro", "priority": 1 },
+    { "providerId": "viggle", "model": "viggle/v1/render", "priority": 5 }
+  ],
+  "fallbackProviderId": "viggle",
+  "providerConfig": {},
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "method": "IN_HOUSE_ORIGINAL",
+    "createdOn": "2026-09-29",
+    "notes": "Original concept created for TREND MACHINE launch. Not derived from any specific existing viral trend."
+  },
+  "rights": {
+    "choreographyOwner": "TREND MACHINE",
+    "choreographyLicense": "Proprietary original choreography concept",
+    "musicIncluded": false,
+    "notes": "No music is bundled. Audio is handled separately from movement."
+  }
+}

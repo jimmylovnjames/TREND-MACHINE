@@ -1,0 +1,97 @@
+{
+  "id": "tpl_zero_gravity_shuffle",
+  "slug": "zero-gravity-shuffle",
+  "name": "Zero Gravity Shuffle",
+  "status": "PREVIEW",
+  "category": "ORIGINAL",
+  "origin": { "type": "ORIGINAL", "conceptId": "con_zero_gravity_shuffle", "trendCandidateId": null },
+  "tagline": "Gravity took the day off.",
+  "hook": "Feet glide, body floats — then gravity remembers you.",
+  "description": "Heel-toe slides that never seem to push off the floor, floating transitions and suspended-weight poses, capped by an exaggerated crash back into gravity. Smooth, hypnotic, a little impossible.",
+  "durationSeconds": 8,
+  "aspectRatio": "9:16",
+  "energy": 3,
+  "difficulty": 4,
+  "tags": ["shuffle", "float", "glide", "smooth", "loop"],
+  "featured": false,
+  "sortOrder": 20,
+  "artwork": { "motif": "float", "palette": ["#7C4DFF", "#00E5FF", "#E8E6FF"] },
+  "media": { "thumbnailKey": null, "previewVideoKey": null },
+  "movement": {
+    "firstSecond": "Both feet slide half a metre sideways with no visible step while the shoulders rise, as if weight has just switched off.",
+    "signature": "The Suspend: standing on one leg, other knee raised, whole body leaning ~15° off-axis and held as if floating in orbit.",
+    "sequence": [
+      {
+        "at": 0,
+        "name": "Lift-off",
+        "description": "Sideways heel-toe slide, shoulders rise, arms drift up with palms down."
+      },
+      {
+        "at": 1.5,
+        "name": "Drift",
+        "description": "Continuous heel-toe glides left and right; arms float at shoulder height."
+      },
+      { "at": 3, "name": "Suspend", "description": "One-leg off-axis float pose, held 0.8s." },
+      {
+        "at": 4,
+        "name": "Gravity returns",
+        "description": "Exaggerated drop: knees bend deep, arms slam down, springy recovery bounce."
+      },
+      { "at": 5.5, "name": "Back-glide", "description": "Backward heel-toe glide, torso upright and calm." },
+      {
+        "at": 7,
+        "name": "Re-float",
+        "description": "Shoulders rise again, settling into the Lift-off stance."
+      }
+    ],
+    "loopPoint": "Re-float ends in the exact Lift-off stance, feet together, so the slide restarts seamlessly.",
+    "bodyFocus": "LOWER_BODY",
+    "designedCharacteristics": {
+      "first_second_hook": 4,
+      "silhouette": 3,
+      "amplitude": 3,
+      "absurdity": 3,
+      "difficulty": 4,
+      "repetition": 4,
+      "loop_quality": 5,
+      "camera_interaction": 1,
+      "transformation_potential": 5,
+      "recognizability": 4,
+      "group_compatibility": 3
+    },
+    "cameraGuidance": "Locked-off camera at hip height, slightly wider framing than usual so lateral glides stay in frame. Smooth floor, contrasting shoes.",
+    "transferConsiderations": [
+      "Feet are the identity of this move: shoes must contrast with the floor and never leave frame.",
+      "Keep glides under ~0.6s each; very fast foot work tends to smear in motion transfer.",
+      "The gravity drop should stay upright — no floor contact with hands or knees."
+    ]
+  },
+  "recipe": {
+    "capability": "HUMAN_MOTION_TRANSFER",
+    "prompt": "The person from the photo performs smooth gliding footwork that looks weightless, in a clean, evenly lit space. Preserve their face, body shape, hair and clothing exactly. Stable camera, feet always visible.",
+    "characterOrientation": "video",
+    "audio": { "mode": "NONE", "trackId": null },
+    "keepReferenceAudio": false,
+    "outputAspectRatio": "9:16",
+    "timeoutSeconds": 900
+  },
+  "providerPreferences": [
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/std", "priority": 0 },
+    { "providerId": "higgsfield", "model": "kling-video/v3/motion-control/pro", "priority": 1 },
+    { "providerId": "viggle", "model": "viggle/v1/render", "priority": 5 }
+  ],
+  "fallbackProviderId": "viggle",
+  "providerConfig": {},
+  "provenance": {
+    "createdBy": "TREND MACHINE in-house",
+    "method": "IN_HOUSE_ORIGINAL",
+    "createdOn": "2026-09-29",
+    "notes": "Original concept created for TREND MACHINE launch. Uses generic heel-toe footwork vocabulary, not any specific existing routine."
+  },
+  "rights": {
+    "choreographyOwner": "TREND MACHINE",
+    "choreographyLicense": "Proprietary original choreography concept",
+    "musicIncluded": false,
+    "notes": "No music is bundled. Audio is handled separately from movement."
+  }
+}

@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #07070a;
+  --color-surface: #111116;
+  --color-surface-2: #1a1a22;
+  --color-line: #2a2a35;
+  --color-fg: #f4f4f6;
+  --color-muted: #a3a3b2;
+  --color-acid: #c6ff00;
+  --color-hot: #ff2e88;
+  --color-cyan: #00e5ff;
+  --color-warn: #ffb300;
+  --color-danger: #ff5c5c;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius-card: 1.25rem;
+}
+
+:root {
+  color-scheme: dark;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-h: 64px;
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-fg);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-variation-settings: "wdth" 70;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-acid);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.pt-safe {
+  padding-top: max(var(--safe-top), 0px);
+}
+.pb-safe {
+  padding-bottom: var(--safe-bottom);
+}
+.pb-nav {
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 24px);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Wordmark: layered chromatic offset, static (no motion needed to read it). */
+.wordmark {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 62;
+  font-stretch: 62%;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+}
+.wordmark::before,
+.wordmark::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.wordmark::before {
+  color: var(--color-hot);
+  transform: translate(-0.045em, 0.02em);
+  clip-path: inset(0 0 55% 0);
+}
+.wordmark::after {
+  color: var(--color-cyan);
+  transform: translate(0.045em, -0.02em);
+  clip-path: inset(55% 0 0 0);
+}
+
+/* Press feedback for touch targets. */
+.pressable {
+  transition:
+    transform 120ms ease,
+    background-color 160ms ease,
+    opacity 160ms ease;
+}
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Motion sketch figure animations (see MotionSketch.tsx). */
+@keyframes glitch-walk {
+  0%,
+  11% {
+    transform: translateY(0) translateX(-6px);
+  }
+  12%,
+  14% {
+    transform: translateY(-1px) translateX(-2px);
+  }
+  15%,
+  30% {
+    transform: translateY(0) translateX(2px);
+  }
+  31%,
+  33% {
+    transform: translateY(0) translateX(8px) skewX(-6deg);
+  }
+  34%,
+  44% {
+    transform: translateY(0) translateX(8px);
+  }
+  45%,
+  55% {
+    transform: translateY(0) translateX(-4px);
+  }
+  56%,
+  57% {
+    transform: translateY(0) translateX(-10px) skewX(8deg);
+  }
+  58%,
+  100% {
+    transform: translateY(0) translateX(-6px);
+  }
+}
+@keyframes glitch-split {
+  0%,
+  30%,
+  34%,
+  55%,
+  58%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  31%,
+  33% {
+    opacity: 0.9;
+    transform: translateX(5px);
+  }
+  56%,
+  57% {
+    opacity: 0.9;
+    transform: translateX(-6px);
+  }
+}
+@keyframes leg-a {
+  0%,
+  100% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+@keyframes leg-b {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+@keyframes arm-a {
+  0%,
+  100% {
+    transform: rotate(-22deg);
+  }
+  50% {
+    transform: rotate(22deg);
+  }
+}
+@keyframes float-body {
+  0%,
+  100% {
+    transform: translate(-10px, 0) rotate(-4deg);
+  }
+  25% {
+    transform: translate(8px, -10px) rotate(6deg);
+  }
+  45% {
+    transform: translate(12px, -16px) rotate(12deg);
+  }
+  55% {
+    transform: translate(6px, 8px) rotate(0deg);
+  }
+  60% {
+    transform: translate(6px, 2px);
+  }
+  80% {
+    transform: translate(-8px, -4px) rotate(-6deg);
+  }
+}
+@keyframes float-arms {
+  0%,
+  100% {
+    transform: rotate(-70deg);
+  }
+  50% {
+    transform: rotate(-95deg);
+  }
+  55% {
+    transform: rotate(-10deg);
+  }
+}
+@keyframes rubber-body {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(16px);
+  }
+  20% {
+    transform: translateY(-4px);
+  }
+  30% {
+    transform: translateY(0) translateX(-8px);
+  }
+  45% {
+    transform: translateY(6px) translateX(6px);
+  }
+  60% {
+    transform: translateY(0);
+  }
+  70% {
+    transform: translateY(14px);
+  }
+  76% {
+    transform: translateY(0);
+  }
+  82% {
+    transform: translateY(14px);
+  }
+  90% {
+    transform: translateY(-2px);
+  }
+}
+@keyframes rubber-knee-l {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  70%,
+  82% {
+    transform: rotate(-38deg);
+  }
+  30% {
+    transform: rotate(20deg);
+  }
+  45% {
+    transform: rotate(-24deg);
+  }
+}
+@keyframes rubber-knee-r {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  70%,
+  82% {
+    transform: rotate(38deg);
+  }
+  30% {
+    transform: rotate(-20deg);
+  }
+  45% {
+    transform: rotate(24deg);
+  }
+}
+@keyframes scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
