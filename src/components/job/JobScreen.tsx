@@ -134,6 +134,8 @@ function InProgress({
           setCanceling(true);
           try {
             onCanceled((await api.cancelJob(job.id)).job);
+          } catch {
+            // Polling continues and will reflect the real state; nothing else to do.
           } finally {
             setCanceling(false);
           }

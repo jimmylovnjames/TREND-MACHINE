@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { MotionSketch } from "@/components/MotionSketch";
 import { Badge, StatRow } from "@/components/Stats";
 import { TemplateViewTracker, UseThisDance } from "@/components/TemplateActions";
@@ -10,13 +11,14 @@ import { getTemplateBySlug, PUBLIC_STATUSES, toPublicTemplate } from "@/server/r
 
 export const dynamic = "force-dynamic";
 
-async function load(slug: string) {
+// Memoized per request: metadata and page share one DB round-trip.
+const load = cache(async function load(slug: string) {
   if (!/^[a-z0-9-]{1,64}$/.test(slug)) return null;
   const db = await getDb();
   const rec = await getTemplateBySlug(db, slug);
   if (!rec || !PUBLIC_STATUSES.includes(rec.status)) return null;
   return { rec, readiness: await evaluateReadiness(db, rec) };
-}
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const data = await load((await params).slug);

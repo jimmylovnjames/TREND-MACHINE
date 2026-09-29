@@ -52,6 +52,21 @@ test.describe("security + platform", () => {
     await expect(page.getByText("REFERENCE_MOTION_PENDING").first()).toBeVisible();
   });
 
+  test("cron tick runs only with its bearer secret", async ({ request }) => {
+    const ok = await request.get("/api/cron/tick", {
+      headers: { Authorization: "Bearer e2e-cron-secret-e2e-cron-secret-0123" },
+    });
+    expect(ok.status()).toBe(200);
+    expect(await ok.json()).toMatchObject({
+      jobs: { checked: expect.any(Number) },
+      retention: expect.any(Object),
+    });
+    const bad = await request.get("/api/cron/tick", {
+      headers: { Authorization: "Bearer nope-nope-nope-nope-nope-nope" },
+    });
+    expect(bad.status()).toBe(404);
+  });
+
   test("trend scanner ingestion needs its token", async ({ request }) => {
     const r = await request.post("/api/admin/trends/ingest", {
       headers: { Authorization: "Bearer wrong-token-wrong-token-wrong" },
