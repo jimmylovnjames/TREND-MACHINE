@@ -14,6 +14,7 @@ import { getStorage, newKey } from "../storage";
 import { getProvider, registeredProviders } from "../providers/registry";
 import { routeGeneration, type RoutingDecision } from "../providers/router";
 import { ProviderError, type ProviderJobStatus } from "../providers/types";
+import { redact } from "../http";
 import { isSafeOutputUrl } from "../providers/http";
 import {
   getTemplateBySlug,
@@ -153,7 +154,8 @@ export class GenerationRequestError extends Error {
 export interface GenerationInput {
   ownerHash: string;
   anonId: string;
-  ipHash: string;
+  /** Day-salted IP hash, or null when the client IP can't be determined (limit skipped). */
+  ipHash: string | null;
   deviceClass: string;
   templateSlug: string;
   /** Optional when regenerating: defaults to the previous job's photo. */
@@ -162,6 +164,9 @@ export interface GenerationInput {
   rightsConfirmed: boolean;
   regenerateOf?: string | null;
 }
+
+/** Jobs that count against limits: active ones, or ones we actually tried to submit (possible spend). */
+const COUNTED = "(status in ('QUEUED','PROCESSING') or submit_attempts > 0)";
 
 async function enforceLimits(q: Queryable, input: GenerationInput): Promise<void> {
   const cfg = getConfig();
@@ -183,10 +188,10 @@ async function enforceLimits(q: Queryable, input: GenerationInput): Promise<void
     cost_day: string | null;
   }>(
     `select
-       count(*) filter (where owner_hash = $1 and created_at > now() - interval '1 hour' and provider_job_id is not null)::int as dev_hour,
-       count(*) filter (where owner_hash = $1 and created_at > now() - interval '1 day' and provider_job_id is not null)::int as dev_day,
-       count(*) filter (where ip_hash = $2 and created_at > now() - interval '1 day' and provider_job_id is not null)::int as ip_day,
-       count(*) filter (where created_at > now() - interval '1 day' and provider_job_id is not null)::int as global_day,
+       count(*) filter (where owner_hash = $1 and created_at > now() - interval '1 hour' and ${COUNTED})::int as dev_hour,
+       count(*) filter (where owner_hash = $1 and created_at > now() - interval '1 day' and ${COUNTED})::int as dev_day,
+       count(*) filter (where $2::text is not null and ip_hash = $2 and created_at > now() - interval '1 day' and ${COUNTED})::int as ip_day,
+       count(*) filter (where created_at > now() - interval '1 day' and ${COUNTED})::int as global_day,
        count(*) filter (where owner_hash = $1 and status in ('QUEUED','PROCESSING'))::int as dev_active,
        count(*) filter (where status in ('QUEUED','PROCESSING'))::int as global_active,
        sum(cost_usd) filter (where created_at > now() - interval '1 day') as cost_day
@@ -298,10 +303,6 @@ export async function requestGeneration(input: GenerationInput, dbIn?: Db): Prom
 
   const readiness = await evaluateReadiness(db, rec);
 
-  // Only jobs that could actually spend money count against limits — but a blocked
-  // request is still recorded truthfully as a failed job.
-  if (readiness.ready) await enforceLimits(db, input);
-
   const deadlineSeconds = rec.spec.recipe.timeoutSeconds + 180; // + submission/upload allowance
   const templateEvent = {
     templateId: rec.id,
@@ -310,40 +311,66 @@ export async function requestGeneration(input: GenerationInput, dbIn?: Db): Prom
     deviceClass: input.deviceClass as never,
   };
 
-  const job = await db.tx(async (q) => {
-    const rows = await q.query<JobRow>(
-      `insert into generation_jobs (owner_hash, ip_hash, idempotency_key, template_id, template_version_id, template_version,
+  let job: JobRow | null;
+  try {
+    job = await db.tx(async (q) => {
+      // Only jobs that could actually spend money count against limits — a blocked request is
+      // still recorded truthfully as a failed job. The advisory lock makes check + insert
+      // atomic so concurrent requests can't overshoot concurrency / budget caps.
+      if (readiness.ready) {
+        if (db.kind === "postgres") await q.query("select pg_advisory_xact_lock(7271001)");
+        await enforceLimits(q, input);
+      }
+      const rows = await q.query<JobRow>(
+        `insert into generation_jobs (owner_hash, ip_hash, idempotency_key, template_id, template_version_id, template_version,
          upload_id, regenerate_of, status, routing, provenance, device_class, deadline_at, next_poll_at)
        values ($1,$2,$3,$4,$5,$6,$7,$8,'QUEUED',$9,$10,$11, now() + make_interval(secs => $12), now())
        on conflict (owner_hash, idempotency_key) do nothing
        returning *`,
-      [
-        input.ownerHash,
-        input.ipHash,
-        input.idempotencyKey,
-        rec.id,
-        rec.versionId,
-        rec.version,
-        upload.id,
-        input.regenerateOf ?? null,
-        JSON.stringify({
-          blockers: readiness.blockers,
-          candidates: readiness.routing.candidates,
-          rejected: readiness.routing.rejected,
-          attempts: [],
-        }),
-        JSON.stringify({
-          generator: "TREND MACHINE",
-          aiGenerated: true,
-          templateId: rec.id,
-          templateVersion: rec.version,
-        }),
-        input.deviceClass,
-        deadlineSeconds,
-      ],
-    );
-    return rows[0] ?? null;
-  });
+        [
+          input.ownerHash,
+          input.ipHash,
+          input.idempotencyKey,
+          rec.id,
+          rec.versionId,
+          rec.version,
+          upload.id,
+          input.regenerateOf ?? null,
+          JSON.stringify({
+            blockers: readiness.blockers,
+            candidates: readiness.routing.candidates,
+            rejected: readiness.routing.rejected,
+            attempts: [],
+          }),
+          JSON.stringify({
+            generator: "TREND MACHINE",
+            aiGenerated: true,
+            templateId: rec.id,
+            templateVersion: rec.version,
+          }),
+          input.deviceClass,
+          deadlineSeconds,
+        ],
+      );
+      return rows[0] ?? null;
+    });
+  } catch (e) {
+    if (e instanceof GenerationRequestError && e.code === "RATE_LIMITED") {
+      // Record refused attempts too: the funnel must show demand we turned away.
+      await track(db, {
+        name: "generation_requested",
+        ...templateEvent,
+        props: { regenerate: !!input.regenerateOf },
+      });
+      await track(db, {
+        name: "generation_failed",
+        ...templateEvent,
+        errorCode: "RATE_LIMITED",
+        props: { reason: e.message },
+      });
+    }
+    throw e;
+  }
   if (!job) {
     const again = await db.query<JobRow>(
       "select * from generation_jobs where owner_hash = $1 and idempotency_key = $2",
@@ -389,7 +416,8 @@ async function failJob(
 ): Promise<JobRow | null> {
   const row = await transition(db, job.id, "FAILED", {
     error_code: code,
-    error_detail: detail.slice(0, 1000),
+    // Provider messages can contain signed URLs; never store them verbatim.
+    error_detail: redact(detail).slice(0, 1000),
     failed_at: new Date(),
     dispatch_lease_until: null,
     poll_lease_until: null,

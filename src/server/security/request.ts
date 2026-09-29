@@ -43,21 +43,28 @@ export async function ensureDevice(): Promise<Device> {
   return deriveDevice(token);
 }
 
-export function clientIp(req: Request): string {
+/**
+ * Client IP, only from proxy headers when TRUST_PROXY_HEADERS=true (i.e. behind a proxy
+ * that overwrites them). Otherwise unknown — spoofable headers are never trusted.
+ */
+export function clientIp(req: Request): string | null {
   const cfg = getConfig();
-  if (cfg.TRUST_PROXY_HEADERS) {
-    const xff = req.headers.get("x-forwarded-for");
-    if (xff) return xff.split(",")[0]!.trim();
-    const real = req.headers.get("x-real-ip");
-    if (real) return real.trim();
-  }
-  return "unknown";
+  if (!cfg.TRUST_PROXY_HEADERS) return null;
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]!.trim() || null;
+  return req.headers.get("x-real-ip")?.trim() || null;
 }
 
-/** Day-salted IP hash: usable for daily rate limits, not for long-term tracking. */
-export function ipHash(req: Request, now = new Date()): string {
+/**
+ * Day-salted IP hash: usable for daily rate limits, not for long-term tracking.
+ * Null when the IP is unknown, so IP limits are skipped instead of collapsing every
+ * visitor into one shared bucket.
+ */
+export function ipHash(req: Request | Headers, now = new Date()): string | null {
+  const ip = clientIp(req instanceof Headers ? new Request("http://x", { headers: req }) : req);
+  if (!ip) return null;
   const day = now.toISOString().slice(0, 10);
-  return hmacHex(getConfig().appSecret, `ip:${day}`, clientIp(req)).slice(0, 32);
+  return hmacHex(getConfig().appSecret, `ip:${day}`, ip).slice(0, 32);
 }
 
 export function deviceClass(userAgent: string | null): DeviceClass {
@@ -78,7 +85,8 @@ export function isSameOrigin(req: Request): boolean {
   const origin = req.headers.get("origin");
   if (!origin) return site === "same-origin" || site === "none";
   try {
-    const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+    const host =
+      (getConfig().TRUST_PROXY_HEADERS && req.headers.get("x-forwarded-host")) || req.headers.get("host");
     return new URL(origin).host === host;
   } catch {
     return false;

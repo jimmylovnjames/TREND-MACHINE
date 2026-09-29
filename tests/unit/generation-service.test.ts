@@ -351,6 +351,39 @@ describe("cost controls", () => {
     await expect(requestGeneration(await input())).rejects.toMatchObject({ code: "RATE_LIMITED" });
   });
 
+  it("records refused (rate-limited) attempts in analytics", async () => {
+    await readyReference();
+    await requestGeneration(await input());
+    await requestGeneration(await input());
+    await expect(requestGeneration(await input())).rejects.toMatchObject({ code: "RATE_LIMITED" });
+    const failedEvents = await events("generation_failed");
+    expect(failedEvents.some((e) => e.error_code === "RATE_LIMITED")).toBe(true);
+    expect((await events("generation_requested")).length).toBe(3);
+  });
+
+  it("applies the per-IP limit only when the IP is known", async () => {
+    await readyReference();
+    process.env.GEN_LIMIT_PER_IP_DAY = "1";
+    process.env.MAX_ACTIVE_JOBS_PER_DEVICE = "10";
+    process.env.GEN_LIMIT_PER_DEVICE_HOUR = "10";
+    const { resetConfigForTests } = await import("@/server/config");
+    resetConfigForTests();
+    try {
+      // Unknown IP: no shared "unknown" bucket that would throttle everyone together.
+      await requestGeneration(await input({ ipHash: null }));
+      await requestGeneration(await input({ ipHash: null }));
+      await requestGeneration(await input({ ipHash: "ip-a" }));
+      await expect(
+        requestGeneration(await input({ ipHash: "ip-a", ownerHash: "other-device" })),
+      ).rejects.toMatchObject({
+        code: "RATE_LIMITED",
+      });
+    } finally {
+      delete process.env.GEN_LIMIT_PER_IP_DAY;
+      resetConfigForTests();
+    }
+  });
+
   it("blocked (not-ready) requests don't consume limits", async () => {
     for (let i = 0; i < 5; i++) {
       const r = await requestGeneration(await input());

@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
 import type { TemplateSpec } from "@/domain/template";
 
 /**
@@ -22,6 +22,7 @@ export function MotionSketch({
   paused?: boolean;
 }) {
   const [a, b, c] = palette;
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const play: CSSProperties["animationPlayState"] = paused ? "paused" : "running";
   const anim = (name: string, dur: number, timing = "linear", origin = "45px 80px"): CSSProperties => ({
     animation: `${name} ${dur}s ${timing} infinite`,
@@ -31,7 +32,8 @@ export function MotionSketch({
   });
 
   return (
-    <div className={`relative overflow-hidden bg-surface ${className}`} aria-hidden="true">
+    // Callers position it (usually `absolute inset-0`); default to a normal in-flow box.
+    <div className={`overflow-hidden bg-surface ${className || "relative"}`} aria-hidden="true">
       <div
         className="absolute inset-0"
         style={{
@@ -44,71 +46,82 @@ export function MotionSketch({
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <pattern id={`grid-${motif}`} width="10" height="10" patternUnits="userSpaceOnUse">
+          <pattern id={`grid-${uid}`} width="10" height="10" patternUnits="userSpaceOnUse">
             <path d="M10 0H0V10" fill="none" stroke="#ffffff" strokeOpacity="0.05" strokeWidth="0.4" />
           </pattern>
         </defs>
-        <rect width="90" height="160" fill={`url(#grid-${motif})`} />
+        <rect width="90" height="160" fill={`url(#grid-${uid})`} />
         {/* floor */}
         <ellipse cx="45" cy="132" rx="22" ry="3" fill={a} opacity="0.18" />
-        {motif === "glitch" && (
-          <>
-            <g style={anim("glitch-split", 2.4, "steps(1)")} opacity="0">
-              <Figure
-                color={b}
-                legAnim={anim("leg-a", 0.6, "steps(3)", "45px 86px")}
-                legAnim2={anim("leg-b", 0.6, "steps(3)", "45px 86px")}
-                armAnim={anim("arm-a", 0.6, "steps(3)", "45px 58px")}
+        <defs>
+          <filter id={`glow-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.2" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <g filter={`url(#glow-${uid})`}>
+          {motif === "glitch" && (
+            <>
+              <g style={anim("glitch-split", 2.4, "steps(1)")} opacity="0">
+                <Figure
+                  color={b}
+                  legAnim={anim("leg-a", 0.6, "steps(3)", "45px 86px")}
+                  legAnim2={anim("leg-b", 0.6, "steps(3)", "45px 86px")}
+                  armAnim={anim("arm-a", 0.6, "steps(3)", "45px 58px")}
+                />
+              </g>
+              <g style={anim("glitch-walk", 2.4, "steps(1)")}>
+                <Figure
+                  color={a}
+                  legAnim={anim("leg-a", 0.6, "steps(3)", "45px 86px")}
+                  legAnim2={anim("leg-b", 0.6, "steps(3)", "45px 86px")}
+                  armAnim={anim("arm-a", 0.6, "steps(3)", "45px 58px")}
+                />
+              </g>
+              <rect
+                width="90"
+                height="14"
+                fill={c}
+                opacity="0.06"
+                style={{ ...anim("scan", 2.2), transformOrigin: "0 0" }}
               />
-            </g>
-            <g style={anim("glitch-walk", 2.4, "steps(1)")}>
-              <Figure
-                color={a}
-                legAnim={anim("leg-a", 0.6, "steps(3)", "45px 86px")}
-                legAnim2={anim("leg-b", 0.6, "steps(3)", "45px 86px")}
-                armAnim={anim("arm-a", 0.6, "steps(3)", "45px 58px")}
-              />
-            </g>
-            <rect
-              width="90"
-              height="14"
-              fill={c}
-              opacity="0.06"
-              style={{ ...anim("scan", 2.2), transformOrigin: "0 0" }}
-            />
-          </>
-        )}
-        {motif === "float" && (
-          <>
-            {[12, 26, 70, 80, 60, 18].map((x, i) => (
-              <circle key={i} cx={x} cy={20 + i * 17} r={0.8} fill={c} opacity={0.5} />
-            ))}
-            <g style={anim("float-body", 4, "cubic-bezier(.45,.05,.55,.95)")}>
-              <Figure
+            </>
+          )}
+          {motif === "float" && (
+            <>
+              {[12, 26, 70, 80, 60, 18].map((x, i) => (
+                <circle key={i} cx={x} cy={20 + i * 17} r={0.8} fill={c} opacity={0.5} />
+              ))}
+              <g style={anim("float-body", 4, "cubic-bezier(.45,.05,.55,.95)")}>
+                <Figure
+                  color={a}
+                  accent={b}
+                  legAnim={anim("leg-a", 2, "ease-in-out", "45px 86px")}
+                  legAnim2={anim("leg-b", 2, "ease-in-out", "45px 86px")}
+                  armAnim={anim("float-arms", 4, "ease-in-out", "45px 58px")}
+                  armAnim2={anim("float-arms", 4, "ease-in-out", "45px 58px")}
+                  mirrorArm2
+                />
+              </g>
+            </>
+          )}
+          {motif === "rubber" && (
+            <g style={anim("rubber-body", 1.8, "cubic-bezier(.3,1.6,.5,1)")}>
+              <RubberFigure
                 color={a}
                 accent={b}
-                legAnim={anim("leg-a", 2, "ease-in-out", "45px 86px")}
-                legAnim2={anim("leg-b", 2, "ease-in-out", "45px 86px")}
-                armAnim={anim("float-arms", 4, "ease-in-out", "45px 58px")}
-                armAnim2={anim("float-arms", 4, "ease-in-out", "45px 58px")}
-                mirrorArm2
+                kneeL={anim("rubber-knee-l", 1.8, "cubic-bezier(.3,1.6,.5,1)", "38px 106px")}
+                kneeR={anim("rubber-knee-r", 1.8, "cubic-bezier(.3,1.6,.5,1)", "52px 106px")}
               />
             </g>
-          </>
-        )}
-        {motif === "rubber" && (
-          <g style={anim("rubber-body", 1.8, "cubic-bezier(.3,1.6,.5,1)")}>
-            <RubberFigure
-              color={a}
-              accent={b}
-              kneeL={anim("rubber-knee-l", 1.8, "cubic-bezier(.3,1.6,.5,1)", "38px 106px")}
-              kneeR={anim("rubber-knee-r", 1.8, "cubic-bezier(.3,1.6,.5,1)", "52px 106px")}
-            />
-          </g>
-        )}
+          )}
+        </g>
       </svg>
       {showLabel && (
-        <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">
+        <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">
           Motion sketch
         </span>
       )}

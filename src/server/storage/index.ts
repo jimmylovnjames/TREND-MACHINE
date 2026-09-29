@@ -23,7 +23,10 @@ export function getStorage(): StorageDriver {
           secretAccessKey: cfg.S3_SECRET_ACCESS_KEY!,
           forcePathStyle: cfg.S3_FORCE_PATH_STYLE,
         })
-      : new LocalStorage(path.resolve(/*turbopackIgnore: true*/ process.cwd(), cfg.LOCAL_STORAGE_DIR), cfg.appSecret);
+      : new LocalStorage(
+          path.resolve(/*turbopackIgnore: true*/ process.cwd(), cfg.LOCAL_STORAGE_DIR),
+          cfg.appSecret,
+        );
   return g.__tmStorage;
 }
 

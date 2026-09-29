@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
@@ -16,6 +17,7 @@ import {
 import { getDb } from "@/server/db";
 import { ingestTrend } from "@/server/admin/trends";
 import { hitRateLimit } from "@/server/ratelimit";
+import { ipHash } from "@/server/security/request";
 import {
   approveReferenceAsset,
   ReferenceValidationError,
@@ -48,8 +50,12 @@ async function audit(action: string, target: string, detail: unknown) {
 
 export async function loginAction(_prev: ActionState, form: FormData): Promise<ActionState> {
   const db = await getDb();
-  if (!(await hitRateLimit(db, "admin-login", 900, 20)))
-    return { ok: false, message: "Too many attempts. Wait 15 minutes." };
+  // Per-IP when the IP is known (behind a trusted proxy), plus a global ceiling.
+  const ip = ipHash(await headers());
+  const tooMany =
+    (ip && !(await hitRateLimit(db, `admin-login:${ip}`, 900, 10))) ||
+    !(await hitRateLimit(db, "admin-login", 900, 60));
+  if (tooMany) return { ok: false, message: "Too many attempts. Wait 15 minutes." };
   const token = String(form.get("token") ?? "");
   if (!checkAdminToken(token)) return { ok: false, message: "Invalid token." };
   await createAdminSession();

@@ -3,7 +3,7 @@ import { getConfig } from "@/server/config";
 import { getDb } from "@/server/db";
 import { apiError, logError, noStore, rejectCrossSite } from "@/server/http";
 import { BodyTooLargeError, readBodyCapped } from "@/server/body";
-import { ensureDevice } from "@/server/security/request";
+import { ensureDevice, ipHash } from "@/server/security/request";
 import { ImageValidationError, imageRejectMessage } from "@/server/uploads/image";
 import { saveSourcePhoto, UploadRateLimitedError } from "@/server/uploads/service";
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   }
   try {
     const db = await getDb();
-    const upload = await saveSourcePhoto(db, device.ownerHash, raw);
+    const upload = await saveSourcePhoto(db, device.ownerHash, raw, ipHash(req));
     return NextResponse.json({ upload }, { status: 201, headers: noStore });
   } catch (e) {
     if (e instanceof ImageValidationError) return apiError(422, "INVALID_INPUT", e.message, noStore);

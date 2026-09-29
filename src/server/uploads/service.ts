@@ -21,10 +21,22 @@ export interface UploadResult {
  * Store a validated, metadata-stripped source photo in private storage.
  * Source photos expire after SOURCE_RETENTION_HOURS and are deleted by cleanup.
  */
-export async function saveSourcePhoto(db: Db, ownerHash: string, raw: Uint8Array): Promise<UploadResult> {
+export async function saveSourcePhoto(
+  db: Db,
+  ownerHash: string,
+  raw: Uint8Array,
+  ipHash: string | null = null,
+): Promise<UploadResult> {
   const cfg = getConfig();
   if (!(await hitRateLimit(db, `upload:${ownerHash}`, 3600, cfg.UPLOAD_LIMIT_PER_DEVICE_HOUR))) {
     throw new UploadRateLimitedError("upload rate limit");
+  }
+  // Clearing cookies mints a new device; the IP bucket still bounds storage abuse.
+  if (
+    ipHash &&
+    !(await hitRateLimit(db, `upload-ip:${ipHash}`, 3600, cfg.UPLOAD_LIMIT_PER_DEVICE_HOUR * 4))
+  ) {
+    throw new UploadRateLimitedError("upload ip rate limit");
   }
   const img = processImage(raw, cfg.MAX_UPLOAD_BYTES);
   const id = randomUUID();

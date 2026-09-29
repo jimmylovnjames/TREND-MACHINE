@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { trackEvent } from "@/client/analytics";
-import type { ReadinessBlocker } from "@/domain/generation";
 
 export function TemplateViewTracker({ templateId, version }: { templateId: string; version: number }) {
   useEffect(() => {
@@ -16,29 +15,20 @@ export function UseThisDance({
   slug,
   templateId,
   version,
-  blockers,
+  ready,
 }: {
   slug: string;
   templateId: string;
   version: number;
-  blockers: ReadinessBlocker[];
+  ready: boolean;
 }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ink/95 px-5 pb-[calc(var(--safe-bottom)+16px)] pt-3 backdrop-blur-md">
       <div className="mx-auto max-w-2xl">
-        {blockers.length > 0 && (
-          <div role="note" className="mb-3 rounded-xl bg-surface-2 p-3 text-xs text-muted">
-            <p className="font-semibold text-warn">Heads up: this dance can&apos;t render yet.</p>
-            <ul className="mt-1 list-disc space-y-0.5 pl-4">
-              {blockers.map((b) => (
-                <li key={b.code}>{b.message}</li>
-              ))}
-            </ul>
-            <p className="mt-1">
-              You can still walk through the steps — we&apos;ll tell you exactly what&apos;s missing, and
-              nothing gets sent anywhere.
-            </p>
-          </div>
+        {!ready && (
+          <p className="mb-2 text-center text-xs text-warn">
+            Preview only — this dance can&apos;t render yet
+          </p>
         )}
         <Link
           href={`/d/${slug}/make`}

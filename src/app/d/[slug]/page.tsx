@@ -32,10 +32,10 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
   const s = rec.spec;
 
   return (
-    <main className="mx-auto max-w-2xl pb-40">
+    <main className="mx-auto max-w-2xl pb-[calc(var(--safe-bottom)+120px)]">
       <TemplateViewTracker templateId={t.id} version={t.version} />
       <div className="relative">
-        <div className="relative mx-auto aspect-[9/16] max-h-[72dvh] w-full max-w-[calc(72dvh*9/16)] overflow-hidden sm:mt-4 sm:rounded-[var(--radius-card)]">
+        <div className="relative mx-auto mt-[calc(var(--safe-top)+8px)] aspect-[9/16] max-h-[70dvh] w-[calc(100%-24px)] max-w-[calc(70dvh*9/16)] overflow-hidden rounded-[var(--radius-card)] border border-line">
           <MotionSketch
             motif={s.artwork.motif}
             palette={s.artwork.palette}
@@ -60,6 +60,20 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
       </div>
 
       <div className="space-y-7 px-5 pt-5">
+        {readiness.blockers.length > 0 && (
+          <div role="note" className="rounded-2xl border border-warn/40 bg-warn/10 p-4 text-sm">
+            <p className="font-semibold text-warn">This dance can&apos;t render yet</p>
+            <ul className="mt-1 list-disc space-y-0.5 pl-5 text-muted">
+              {readiness.blockers.map((b) => (
+                <li key={b.code}>{b.message}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-muted">
+              You can still walk through the steps — we&apos;ll tell you exactly what&apos;s missing, and your
+              photo won&apos;t be sent anywhere.
+            </p>
+          </div>
+        )}
         <div>
           <p className="text-xl font-semibold leading-snug">{s.hook}</p>
           <p className="mt-3 text-muted">{s.description}</p>
@@ -114,7 +128,7 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
         </section>
       </div>
 
-      <UseThisDance slug={t.slug} templateId={t.id} version={t.version} blockers={readiness.blockers} />
+      <UseThisDance slug={t.slug} templateId={t.id} version={t.version} ready={readiness.ready} />
     </main>
   );
 }

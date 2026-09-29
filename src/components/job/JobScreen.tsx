@@ -214,7 +214,11 @@ function Failed({ job }: { job: JobView }) {
       <div className="mt-6">
         <ErrorPanel
           error={shown}
-          details={regen.err ? undefined : job.blockers.map((b) => b.message)}
+          details={
+            regen.err
+              ? undefined
+              : job.blockers.filter((b) => b.code !== shown.code).map((b) => `Also needed: ${b.message}`)
+          }
           onAction={(a) => {
             if (a === "RETRY") void regen.run();
             if (a === "CHANGE_PHOTO") router.push(`/d/${job.template.slug}/make`);

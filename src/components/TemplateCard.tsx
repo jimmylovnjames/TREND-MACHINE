@@ -45,7 +45,7 @@ export function TemplateCard({
       className={`pressable group relative block shrink-0 snap-start overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface ${large ? "w-full" : "w-[44vw] max-w-[220px]"}`}
       aria-label={`${t.name}: ${t.tagline}`}
     >
-      <div className="relative aspect-[9/16]">
+      <div className={`relative ${large ? "aspect-[4/5]" : "aspect-[9/16]"}`}>
         <MotionSketch
           motif={t.artwork.motif}
           palette={t.artwork.palette}

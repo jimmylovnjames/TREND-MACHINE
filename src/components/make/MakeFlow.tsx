@@ -87,6 +87,13 @@ export function MakeFlow({ template }: { template: PublicTemplate }) {
     }
   };
 
+  // A file picked before hydration finished would otherwise be silently lost.
+  useEffect(() => {
+    const early = galleryInput.current?.files?.[0] ?? cameraInput.current?.files?.[0];
+    if (early) void onFile(early, "gallery");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onCrop = useCallback(
     (crop: CropState, frame: { w: number; h: number }) => {
       cropRef.current = { crop, frame };

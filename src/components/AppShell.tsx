@@ -23,7 +23,8 @@ function useOnline() {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const online = useOnline();
-  const hideNav = pathname.startsWith("/admin") || /^\/d\/[^/]+\/make/.test(pathname);
+  // Dance pages have their own back button + primary CTA bar; admin has its own chrome.
+  const hideNav = pathname.startsWith("/admin") || pathname.startsWith("/d/");
 
   useEffect(() => {
     const installed = window.matchMedia?.("(display-mode: standalone)").matches ?? false;
